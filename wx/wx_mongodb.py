@@ -8,8 +8,13 @@ uri = "mongodb://kaer:kaer2023@18.218.72.82:27017/?authMechanism=DEFAULT"
 myclient = pymongo.MongoClient(uri)
 mydb = myclient['chat_gpt_x']
 
+
 def writeMsg(table, jsonStr):
-    jsonStr['messageId'] = str(uuid.uuid4().int>>64)
+    jsonStr['messageId'] = uuid.uuid4().int >> 64
+    if "@" in jsonStr["msgContent"]:
+        jsonStr['isSpecial'] = "1"
+    else:
+        jsonStr['isSpecial'] = "0"
     chat_table = jsonStr['chat_table']
     print('chat_table11', chat_table)
     myquery = {"chat_table": chat_table}
@@ -18,7 +23,7 @@ def writeMsg(table, jsonStr):
     print('WCContact mydoc', len(mydoc))
     jsonStr['isGroup'] = "0"
     user_nick = ''
-    isGroup=False
+    isGroup = False
     if len(mydoc) > 0:
         for x in mydoc:
             user_nick = x['m_nsAliasName']
@@ -29,7 +34,7 @@ def writeMsg(table, jsonStr):
         print('GroupContact mydoc', mydoc)
         if len(mydoc) > 0:
             jsonStr['isGroup'] = "1"
-            isGroup=True
+            isGroup = True
             for x in mydoc:
                 user_nick = x['nickname']
                 print("GroupContact results", x['m_nsAliasName'])
@@ -57,7 +62,7 @@ def writeMsg(table, jsonStr):
 
 
 def writeContact(table, jsonStr):
-    jsonStr['messageId'] = str(uuid.uuid4().int>>64)
+    jsonStr['messageId'] = uuid.uuid4().int >> 64
     mycol = mydb[table]
     myquery = {"m_nsAliasName": jsonStr['m_nsAliasName']}
     wxContactMycol = mydb["WCContact"]
@@ -69,7 +74,7 @@ def writeContact(table, jsonStr):
 
 
 def writeContactGroup(table, jsonStr):
-    jsonStr['messageId'] = str(uuid.uuid4().int>>64)
+    jsonStr['messageId'] = uuid.uuid4().int >> 64
     mycol = mydb[table]
     myquery = {"m_nsAliasName": jsonStr['m_nsAliasName']}
     wxContactMycol = mydb["GroupContact"]
